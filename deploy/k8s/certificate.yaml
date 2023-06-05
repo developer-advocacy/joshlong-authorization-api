@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: joshlong-api-certificate
+spec:
+  domains:
+    - api.joshlong.com

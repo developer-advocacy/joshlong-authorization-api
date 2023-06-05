@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+  labels:
+    app: joshlong-api
+  name: joshlong-api
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: joshlong-api
+  type: LoadBalancer
