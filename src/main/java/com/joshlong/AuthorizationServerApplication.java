@@ -18,8 +18,6 @@ public class AuthorizationServerApplication {
         SpringApplication.run(AuthorizationServerApplication.class, args);
     }
 
-    // todo refactor this to talk to a SQL db or something.
-    //  Puuuhleeze don't just leave the keys to the kingdom laying around in the Java code!
     @Bean
     InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         var one = User.withDefaultPasswordEncoder().roles("admin").username("sjohnr").password("pw").build();

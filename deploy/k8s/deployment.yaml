@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: joshlong-api
-  name: joshlong-api
+    app: joshlong-authorization-api
+  name: joshlong-authorization-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: joshlong-api
+      app: joshlong-authorization-api
   template:
     metadata:
       labels:
-        app: joshlong-api
+        app: joshlong-authorization-api
     spec:
       containers:
-        - image: gcr.io/pgtm-jlong/joshlong-api
+        - image: gcr.io/pgtm-jlong/joshlong-authorization-api
           imagePullPolicy: Always
-          name: joshlong-api
+          name: joshlong-authorization-api
 
           startupProbe:
             failureThreshold: 240
@@ -42,13 +42,10 @@ spec:
 
           envFrom:
             - secretRef:
-                name: joshlong-api-secrets
+                name: joshlong-authorization-api-secrets
 
           env:
-            - name: BLOG_RESET_ON_REBUILD
-              value: "true"
-            - name: BLOG_API_SERVER_URI
-              value: "https://api.joshlong.com"
+
             - name: LANG
               value: "en_US.UTF-8"
 
@@ -56,6 +53,6 @@ spec:
             - containerPort: 8080
           resources:
             limits:
-              memory: "2Gi"
+              memory: "1Gi"
             requests:
-              memory: "2Gi"
+              memory: "1Gi"

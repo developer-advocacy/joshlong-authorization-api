@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   annotations:
     ingress.kubernetes.io/force-ssl-redirect: "true"
-    networking.gke.io/managed-certificates: "joshlong-api-certificate"
-    kubernetes.io/ingress.global-static-ip-name: "developer-advocacy-joshlong-api-ip"
-  name: joshlong-api-ingress
+    networking.gke.io/managed-certificates: "joshlong-authorization-api-certificate"
+    kubernetes.io/ingress.global-static-ip-name: "developer-advocacy-joshlong-authorization-api-ip"
+  name: joshlong-authorization-api-ingress
 spec:
   defaultBackend:
     service:
-      name: joshlong-api
+      name: joshlong-authorization-api
       port:
         number: 80

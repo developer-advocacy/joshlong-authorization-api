@@ -4,12 +4,12 @@ metadata:
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
   labels:
-    app: joshlong-api
-  name: joshlong-api
+    app: joshlong-authorization-api
+  name: joshlong-authorization-api
 spec:
   ports:
     - port: 80
       targetPort: 8080
   selector:
-    app: joshlong-api
+    app: joshlong-authorization-api
   type: LoadBalancer
