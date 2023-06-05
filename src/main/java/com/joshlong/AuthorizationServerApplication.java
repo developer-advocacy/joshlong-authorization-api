@@ -20,6 +20,7 @@ public class AuthorizationServerApplication {
 
     @Bean
     InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+        System.out.println("Running...");
         var one = User.withDefaultPasswordEncoder().roles("admin").username("sjohnr").password("pw").build();
         var two = User.withDefaultPasswordEncoder().roles("user").username("jlong").password("pw").build();
         return new InMemoryUserDetailsManager(one, two);
