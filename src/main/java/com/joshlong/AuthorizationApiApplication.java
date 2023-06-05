@@ -1,13 +1,19 @@
 package com.joshlong;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -15,11 +21,17 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder;
+
 /**
  * Provides the centralized OAuth authorization service for all my infrastructure going forward.
  *
  * @author Josh Long
  */
+@EnableConfigurationProperties(AuthorizationApiProperties.class)
 @SpringBootApplication
 public class AuthorizationApiApplication {
 
@@ -55,7 +67,7 @@ public class AuthorizationApiApplication {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults());
@@ -64,10 +76,22 @@ public class AuthorizationApiApplication {
     }
 
     @Bean
-    InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        var one = User.withDefaultPasswordEncoder().roles("admin").username("sjohnr").password("pw").build();
-        var two = User.withDefaultPasswordEncoder().roles("user").username("jlong").password("pw").build();
+    InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
+        properties.users().forEach((k, v) -> System.out.println(k + '=' + v));
+        /*var users = new ConcurrentHashMap<String, UserDetails>();
+        properties.users().forEach((userId, user) -> {
+            var ud = new User(userId, user.getPassword(), true, true, true, true,
+                    user.getRoles().stream()
+                            .map(r -> new SimpleGrantedAuthority(r)).toList());
+            users.put(userId, ud);
+        }); //todo make the thing above work*/
+        var one = withDefaultPasswordEncoder().roles("admin").username("sjohnr").password("pw").build();
+        var two = withDefaultPasswordEncoder().roles("user").username("jlong").password("pw").build();
         return new InMemoryUserDetailsManager(one, two);
     }
 }
 
+// todo figure out how to make this secure and to not be stored in the source code!
+@ConfigurationProperties(prefix = "bootiful.authorization")
+record AuthorizationApiProperties(Map<String, SecurityProperties.User> users) {
+}
