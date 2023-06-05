@@ -9,7 +9,7 @@ export IMAGE_NAME=gcr.io/${GCLOUD_PROJECT}/${APP_NAME}
 export RESERVED_IP_NAME=${NS_NAME}-${APP_NAME}-ip
 docker rmi -f $IMAGE_NAME
 cd $ROOT_DIR
-./mvnw -DskipTests=true spring-javaformat:apply clean package spring-boot:build-image -Dspring-boot.build-image.imageName=$IMAGE_NAME
+./gradlew  bootBuildImage --imageName=$IMAGE_NAME
 docker push $IMAGE_NAME
 gcloud compute addresses list --format json | jq '.[].name' -r | grep $RESERVED_IP_NAME || gcloud compute addresses create $RESERVED_IP_NAME --global
 touch $SECRETS_FN
