@@ -60,7 +60,7 @@ public class AuthorizationApiApplication {
         return http.build();
     }
 
-    @Bean
+    /*@Bean
     AuthorizationServerSettings authorizationServerSettings(AuthorizationApiProperties authorizationApiProperties) {
         return AuthorizationServerSettings.builder()
                 .issuer( authorizationApiProperties.issuerUri().toExternalForm())
@@ -76,7 +76,7 @@ public class AuthorizationApiApplication {
                 .oidcClientRegistrationEndpoint("/connect/v1/register")
                 .build();
     }
-
+*/
     @Bean
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
