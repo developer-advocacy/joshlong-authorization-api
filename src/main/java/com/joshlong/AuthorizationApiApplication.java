@@ -92,7 +92,7 @@ public class AuthorizationApiApplication {
 
     @Bean
     InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
-        properties.users().forEach((k, v) -> System.out.println(k + '=' + v));
+//        properties.users().forEach((k, v) -> System.out.println(k + '=' + v));
         /*var users = new ConcurrentHashMap<String, UserDetails>();
         properties.users().forEach((userId, user) -> {
             var ud = new User(userId, user.getPassword(), true, true, true, true,
