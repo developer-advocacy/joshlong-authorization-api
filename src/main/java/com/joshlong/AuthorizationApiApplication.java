@@ -1,5 +1,7 @@
 package com.joshlong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +15,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
-import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -33,10 +34,11 @@ import static org.springframework.security.core.userdetails.User.withDefaultPass
 @SpringBootApplication
 public class AuthorizationApiApplication {
 
+    private final static Logger log = LoggerFactory.getLogger(AuthorizationApiApplication.class) ;
+
     public static void main(String[] args) {
         SpringApplication.run(AuthorizationApiApplication.class, args);
     }
-
 
     @Bean
     @Order(1)
@@ -60,23 +62,6 @@ public class AuthorizationApiApplication {
         return http.build();
     }
 
-    /*@Bean
-    AuthorizationServerSettings authorizationServerSettings(AuthorizationApiProperties authorizationApiProperties) {
-        return AuthorizationServerSettings.builder()
-                .issuer( authorizationApiProperties.issuerUri().toExternalForm())
-                .authorizationEndpoint("/oauth2/v1/authorize")
-                .deviceAuthorizationEndpoint("/oauth2/v1/device_authorization")
-                .deviceVerificationEndpoint("/oauth2/v1/device_verification")
-                .tokenEndpoint("/oauth2/v1/token")
-                .tokenIntrospectionEndpoint("/oauth2/v1/introspect")
-                .tokenRevocationEndpoint("/oauth2/v1/revoke")
-                .jwkSetEndpoint("/oauth2/v1/jwks")
-                .oidcLogoutEndpoint("/connect/v1/logout")
-                .oidcUserInfoEndpoint("/connect/v1/userinfo")
-                .oidcClientRegistrationEndpoint("/connect/v1/register")
-                .build();
-    }
-*/
     @Bean
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -92,7 +77,12 @@ public class AuthorizationApiApplication {
 
     @Bean
     InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
-//        properties.users().forEach((k, v) -> System.out.println(k + '=' + v));
+        if (properties.users() != null) {
+            if (log.isDebugEnabled()){
+                log.debug("logging users that I hope to configure one day");
+                properties.users().forEach((k, v) ->  log.debug( k + '=' + v));
+            }
+        }
         /*var users = new ConcurrentHashMap<String, UserDetails>();
         properties.users().forEach((userId, user) -> {
             var ud = new User(userId, user.getPassword(), true, true, true, true,
