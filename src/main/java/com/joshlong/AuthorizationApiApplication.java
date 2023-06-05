@@ -11,18 +11,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
+import java.net.URL;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder;
 
@@ -63,6 +61,23 @@ public class AuthorizationApiApplication {
     }
 
     @Bean
+    AuthorizationServerSettings authorizationServerSettings(AuthorizationApiProperties authorizationApiProperties) {
+        return AuthorizationServerSettings.builder()
+                .issuer( authorizationApiProperties.issuerUri().toExternalForm())
+                .authorizationEndpoint("/oauth2/v1/authorize")
+                .deviceAuthorizationEndpoint("/oauth2/v1/device_authorization")
+                .deviceVerificationEndpoint("/oauth2/v1/device_verification")
+                .tokenEndpoint("/oauth2/v1/token")
+                .tokenIntrospectionEndpoint("/oauth2/v1/introspect")
+                .tokenRevocationEndpoint("/oauth2/v1/revoke")
+                .jwkSetEndpoint("/oauth2/v1/jwks")
+                .oidcLogoutEndpoint("/connect/v1/logout")
+                .oidcUserInfoEndpoint("/connect/v1/userinfo")
+                .oidcClientRegistrationEndpoint("/connect/v1/register")
+                .build();
+    }
+
+    @Bean
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -93,5 +108,5 @@ public class AuthorizationApiApplication {
 
 // todo figure out how to make this secure and to not be stored in the source code!
 @ConfigurationProperties(prefix = "bootiful.authorization")
-record AuthorizationApiProperties(Map<String, SecurityProperties.User> users) {
+record AuthorizationApiProperties(URL issuerUri, Map<String, SecurityProperties.User> users) {
 }
