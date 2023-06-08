@@ -13,10 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -25,8 +22,8 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides the centralized OAuth authorization service for all my infrastructure going forward.
@@ -79,22 +76,22 @@ public class AuthorizationApiApplication {
     }
 
     @Bean
-    InMemoryUserDetailsManager inMemoryUserDetailsManager( AuthorizationApiProperties properties) {
+    InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
         Assert.state(properties.users() != null && properties.users().size() > 0, "you must specify some users!");
-        var users = new ConcurrentHashMap<String, UserDetails>();
-        for (var entry : properties.users().entrySet()) {
-            var userId = entry.getKey();
-            var user = entry.getValue();
-            var userDetails = User.withDefaultPasswordEncoder()
-                    .roles(user.roles())
-                    .username(userId)
-                    .password(user.password())
-                    .build();
-            users.put(userId, userDetails);
-            log.info("registered new user [" + userId + "] with password [" + user.password() + "] and roles[" +
-                     userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList() + "]");
-        }
-        return new InMemoryUserDetailsManager(users.values());
+        var users = properties
+                .users()
+                .entrySet()
+                .stream()
+                .peek(e -> log.info("registered new user [" + e.getKey() + "] with password [" + e.getValue().password() + "] and roles[" +
+                                Arrays.toString(e.getValue().roles()) + "]"))
+                .map(e -> User.withDefaultPasswordEncoder()
+                        .roles(e.getValue().roles())
+                        .username(e.getKey())
+                        .password(e.getValue().password())
+                        .build()
+                )
+                .toList();
+        return new InMemoryUserDetailsManager(users);
     }
 
     @Bean
