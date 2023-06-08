@@ -98,5 +98,5 @@ public class AuthorizationApiApplication {
 
 // todo figure out how to make this secure and to not be stored in the source code!
 @ConfigurationProperties(prefix = "bootiful.authorization")
-record AuthorizationApiProperties(URL issuerUri, Map<String, SecurityProperties.User> users) {
+record AuthorizationApiProperties( Map<String, SecurityProperties.User> users) {
 }
