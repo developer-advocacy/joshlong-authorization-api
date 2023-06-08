@@ -7,7 +7,9 @@ env:
   DB_SCHEMA: ${{secrets.JOSHLONG_DB_SCHEMA}} 
   DB_PASSWORD: ${{ secrets.JOSHLONG_DB_PASSWORD }}
   DB_USERNAME: ${{ secrets.JOSHLONG_DB_USERNAME }}
-  
+
+  TWIS_CLIENT_KEY: ${{ secrets.TWIS_CLIENT_KEY }}
+  TWIS_CLIENT_KEY_SECRET: ${{ secrets.TWIS_CLIENT_KEY_SECRET }}
 
 
   APP_NAME: joshlong-authorization-api

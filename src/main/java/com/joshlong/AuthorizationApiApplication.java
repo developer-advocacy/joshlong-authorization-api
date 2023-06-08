@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
@@ -87,27 +86,21 @@ public class AuthorizationApiApplication {
         for (var entry : properties.users().entrySet()) {
             var userId = entry.getKey();
             var user = entry.getValue();
-            var userDetails = User.builder()//
-                    .passwordEncoder(passwordEncoder::encode)//
-                    .roles(user.roles())//
-                    .username(userId)//
-                    .password(user.password())//
+            var userDetails = User.withDefaultPasswordEncoder()
+                    .roles(user.roles())
+                    .username(userId)
+                    .password(user.password())
                     .build();
             users.put(userId, userDetails);
-            log.info("registered new user [" + userId + "] with password [" + user.password() +
-                     "] and roles[" + userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList() + "]");
+            log.info("registered new user [" + userId + "] with password [" + user.password() + "] and roles[" +
+                     userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList() + "]");
         }
         return new InMemoryUserDetailsManager(users.values());
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
     ApplicationRunner debugEnv() {
-        return args -> System.getenv().forEach((k, v) -> log.info( '\t'+k + '=' + v));
+        return args -> System.getenv().forEach((k, v) -> log.info('\t' + k + '=' + v));
     }
 
 }
