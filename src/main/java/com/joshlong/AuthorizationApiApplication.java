@@ -23,7 +23,7 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Provides the centralized OAuth authorization service for all my infrastructure going forward.
@@ -77,17 +77,14 @@ public class AuthorizationApiApplication {
 
     @Bean
     InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
-        Assert.state(properties.users() != null && properties.users().size() > 0, "you must specify some users!");
-        var users = properties
-                .users()
-                .entrySet()
-                .stream()
-                .peek(e -> log.info("registered new user [" + e.getKey() + "] with password [" + e.getValue().password() + "] and roles[" +
-                                Arrays.toString(e.getValue().roles()) + "]"))
+        Assert.state(properties.users() != null && properties.users().length > 0, "you must specify some users!");
+        var users = Stream.of(properties.users())
+                .peek(e -> log.info("registered new user [" + e.username() + "] with password [" + e.password() + "] and roles[" +
+                                    Arrays.toString(e.roles()) + "]"))
                 .map(e -> User.withDefaultPasswordEncoder()
-                        .roles(e.getValue().roles())
-                        .username(e.getKey())
-                        .password(e.getValue().password())
+                        .roles(e.roles())
+                        .username(e.username())
+                        .password(e.password())
                         .build()
                 )
                 .toList();
@@ -103,8 +100,8 @@ public class AuthorizationApiApplication {
 
 
 @ConfigurationProperties(prefix = "bootiful.authorization")
-record AuthorizationApiProperties(Map<String, UserSpecification> users) {
+record AuthorizationApiProperties(UserSpecification[] users) {
 }
 
-record UserSpecification(String password, String[] roles) {
+record UserSpecification(String password, String username, String[] roles) {
 }
