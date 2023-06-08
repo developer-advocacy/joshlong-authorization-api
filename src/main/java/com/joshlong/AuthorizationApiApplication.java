@@ -79,8 +79,7 @@ public class AuthorizationApiApplication {
     }
 
     @Bean
-    InMemoryUserDetailsManager inMemoryUserDetailsManager(PasswordEncoder passwordEncoder,
-                                                          AuthorizationApiProperties properties) {
+    InMemoryUserDetailsManager inMemoryUserDetailsManager( AuthorizationApiProperties properties) {
         Assert.state(properties.users() != null && properties.users().size() > 0, "you must specify some users!");
         var users = new ConcurrentHashMap<String, UserDetails>();
         for (var entry : properties.users().entrySet()) {
