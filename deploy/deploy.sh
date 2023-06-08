@@ -22,7 +22,6 @@ TWIS_CLIENT_KEY=${TWIS_CLIENT_KEY}
 TWIS_CLIENT_KEY_SECRET=${TWIS_CLIENT_KEY_SECRET}
 TWIS_USER=${TWIS_USER}
 TWIS_PASSWORD=${TWIS_PASSWORD}
-
 EOF
 kubectl delete secrets $SECRETS || echo "no secrets to delete."
 kubectl create secret generic $SECRETS --from-env-file $SECRETS_FN
