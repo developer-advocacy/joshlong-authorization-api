@@ -45,9 +45,10 @@ spec:
                 name: joshlong-authorization-api-secrets
 
           env:
-            - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_CLIENT_TWI_REGISTRATION_REDIRECT_URIS
+            - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_ISSUER
+              value : "https://authorization.joshlong.com"
+            - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_CLIENT_TWIS_REGISTRATION_REDIRECT_URIS
               value : "https://studio.twis.online/login/oauth2/code/spring"
-
             - name: SERVER_PORT
               value: "8080"
             - name: LANG
