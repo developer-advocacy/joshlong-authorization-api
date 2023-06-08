@@ -2,6 +2,7 @@ package com.joshlong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -103,6 +104,12 @@ public class AuthorizationApiApplication {
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
+    @Bean
+    ApplicationRunner debugEnv() {
+        return args -> System.getenv().forEach((k, v) -> log.info( '\t'+k + '=' + v));
+    }
+
 }
 
 
