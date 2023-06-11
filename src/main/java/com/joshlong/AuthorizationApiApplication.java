@@ -42,6 +42,7 @@ public class AuthorizationApiApplication {
         SpringApplication.run(AuthorizationApiApplication.class, args);
     }
 
+/*
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
@@ -49,6 +50,7 @@ public class AuthorizationApiApplication {
             web.httpFirewall(new DefaultHttpFirewall());
         };
     }
+*/
 
     @Bean
     @Order(1)
