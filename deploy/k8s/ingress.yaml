@@ -7,18 +7,6 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: "developer-advocacy-joshlong-authorization-api-ip"
   name: joshlong-authorization-api-ingress
 spec:
-  rules:
-  - host: authorization.joshlong.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: joshlong-authorization-api
-          servicePort: 80
-      - path: /
-        backend:
-          serviceName: joshlong-authorization-api
-          servicePort: 443
   defaultBackend:
     service:
       name: joshlong-authorization-api
