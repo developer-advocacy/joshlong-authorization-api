@@ -48,7 +48,7 @@ spec:
             - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_ISSUER
               value : "http://authorization.joshlong.com"
             - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_CLIENT_CLIENT_1_REGISTRATION_REDIRECT_URIS
-              value : "https://studio.twis.online/login/oauth2/code/spring"
+              value : "http://studio.twis.online/login/oauth2/code/spring"
             - name: SERVER_PORT
               value: "8080"
             - name: LANG
