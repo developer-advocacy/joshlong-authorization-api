@@ -56,6 +56,8 @@ spec:
 
           ports:
             - containerPort: 8080
+            - containerPort: 8443
+
           resources:
             limits:
               memory: "1Gi"
