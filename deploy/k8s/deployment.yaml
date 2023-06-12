@@ -23,21 +23,21 @@ spec:
             failureThreshold: 100
             periodSeconds: 10
             httpGet:
-              port: 8443
+              port: 8080
               path: /actuator/health/readiness
 
           readinessProbe:
             failureThreshold: 100
             periodSeconds: 10
             httpGet:
-              port: 8443
+              port: 8080
               path: /actuator/health/readiness
 
           livenessProbe:
             failureThreshold: 100
             periodSeconds: 10
             httpGet:
-              port: 8443
+              port: 8080
               path: /actuator/health/liveness
 
           envFrom:
@@ -46,16 +46,16 @@ spec:
 
           env:
             - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_ISSUER
-              value : "https://authorization.joshlong.com"
+              value : "http://authorization.joshlong.com"
             - name: SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_CLIENT_CLIENT_1_REGISTRATION_REDIRECT_URIS
               value : "https://studio.twis.online/login/oauth2/code/spring"
             - name: SERVER_PORT
-              value: "8443"
+              value: "8080"
             - name: LANG
               value: "en_US.UTF-8"
 
           ports:
-            - containerPort: 8443
+            - containerPort: 8080
 
           resources:
             limits:
