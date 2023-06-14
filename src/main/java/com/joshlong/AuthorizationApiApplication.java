@@ -55,7 +55,8 @@ public class AuthorizationApiApplication {
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint(
-                                        "https://authorization.joshlong.com/login"), //todo make this dynamic again!
+                                   "/login"   //  "https://authorization.joshlong.com/login"
+                                ), //todo make this dynamic again!
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
