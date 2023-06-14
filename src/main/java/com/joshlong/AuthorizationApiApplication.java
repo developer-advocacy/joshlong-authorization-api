@@ -42,16 +42,6 @@ public class AuthorizationApiApplication {
         SpringApplication.run(AuthorizationApiApplication.class, args);
     }
 
-/*
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> {
-            log.info("installing the " + DefaultHttpFirewall.class.getName());
-            web.httpFirewall(new DefaultHttpFirewall());
-        };
-    }
-*/
-
     @Bean
     @Order(1)
     SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
@@ -64,7 +54,8 @@ public class AuthorizationApiApplication {
                 // authorization endpoint
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new LoginUrlAuthenticationEntryPoint(
+                                        "https://authorization.joshlong.com/login"), //todo make this dynamic again!
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
