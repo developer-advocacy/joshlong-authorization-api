@@ -2,7 +2,10 @@ name: Deploy
 
 env:
 
-  
+  REDIS_HOST : ${{ secrets.JOSHLONG_REDIS_HOST }}
+  REDIS_PASSWORD : ${{ secrets.JOSHLONG_REDIS_PASSWORD }}
+  REDIS_PORT: ${{ secrets.JOSHLONG_REDIS_PORT }}
+
   DB_HOST: ${{secrets.JOSHLONG_DB_HOST}} 
   DB_SCHEMA: ${{secrets.JOSHLONG_DB_SCHEMA}} 
   DB_PASSWORD: ${{ secrets.JOSHLONG_DB_PASSWORD }}
