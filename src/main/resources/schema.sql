@@ -1,11 +1,17 @@
 -- 'classpath:org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql'
--- 'classpath:org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql'
+-- were not using the oauth2-registered-client-schema.sql yet..
 
--- /*
--- IMPORTANT:
---     If using PostgreSQL, update ALL columns defined with 'blob' to 'text',
---     as PostgreSQL does not support the 'blob' data type.
--- */
+
+
+
+
+
+
+-- 'classpath:org/springframework/security/oauth2/server/authorization/oauth2-authorization-schema.sql'
+--
+-- If using PostgreSQL, update ALL columns defined with 'blob' to 'text',
+-- as PostgreSQL does not support the 'blob' data type.
+--
 CREATE TABLE if not exists oauth2_authorization
 (
     id                            varchar(100) NOT NULL,
@@ -44,7 +50,7 @@ CREATE TABLE if not exists oauth2_authorization
     PRIMARY KEY (id)
 );
 
-
+--
 -- 'classpath:org/springframework/security/oauth2/server/authorization/oauth2-authorization-consent-schema.sql'
 CREATE TABLE if not exists oauth2_authorization_consent
 (
