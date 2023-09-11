@@ -21,14 +21,20 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.converter.RsaKeyConverters;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
@@ -43,6 +49,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
@@ -115,7 +122,7 @@ public class AuthorizationApiApplication {
 
     @Bean
     ApplicationRunner usersRunner(
-            PasswordEncoder passwordEncoder ,
+            PasswordEncoder passwordEncoder,
             AuthorizationApiProperties properties,
             UserDetailsManager userDetailsManager) {
         return args -> Stream.of(properties.users())
@@ -195,6 +202,42 @@ public class AuthorizationApiApplication {
 
 
     }
+
+
+    // clients
+
+/*
+    @Bean
+    RegisteredClientRepository registeredClientRepository(JdbcTemplate template) {
+        return new JdbcRegisteredClientRepository(template);
+    }
+
+    @Bean
+    ApplicationRunner clientsRunner(RegisteredClientRepository repository,
+                                    PasswordEncoder passwordEncoder ,
+                                    @Value("${TWIS_CLIENT_KEY_SECRET}") String twisClientSecret) {
+        return args -> {
+            var clientId = "twis";
+            if (repository.findByClientId(clientId) == null) {
+                repository.save(
+                        RegisteredClient
+                                .withId(UUID.randomUUID().toString())
+                                .clientId(clientId)
+
+                                .clientSecret(passwordEncoder.encode(twisClientSecret) )
+                                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                                .authorizationGrantTypes(grantTypes -> grantTypes.addAll(Set.of(
+                                        AuthorizationGrantType.CLIENT_CREDENTIALS,
+                                        AuthorizationGrantType.AUTHORIZATION_CODE,
+                                        AuthorizationGrantType.REFRESH_TOKEN)))
+                                .redirectUri("http://127.0.0.1:8082/login/oauth2/code/spring")
+                                .scopes(scopes -> scopes.addAll(Set.of("user.read", "user.write", OidcScopes.OPENID)))
+                                .build()
+                );
+            }
+        };
+    }
+*/
 
 
 }
