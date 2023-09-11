@@ -128,11 +128,8 @@ public class AuthorizationApiApplication {
                             .password(e.password())
                             .build()
                     )
-                    .forEach((u) -> {
-                        if (!userDetailsManager.userExists(u.getUsername())) {
-                            userDetailsManager.createUser(u);
-                        }
-                    });
+                    .filter(u -> !userDetailsManager.userExists(u.getUsername()))
+                    .forEach(userDetailsManager::createUser);
         };
     }
 /*
@@ -198,9 +195,6 @@ public class AuthorizationApiApplication {
 
 
     }
-
-
-
 
 
 }
