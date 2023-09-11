@@ -14,9 +14,6 @@ gcloud compute addresses list --format json | jq '.[].name' -r | grep $RESERVED_
 docker push $IMAGE_NAME
 touch $SECRETS_FN
 echo writing to "$SECRETS_FN "
-# REDIS_HOST=${REDIS_HOST}
-# REDIS_PASSWORD=${REDIS_PASSWORD}
-# REDIS_PORT=${REDIS_PORT}
 cat <<EOF >${SECRETS_FN}
 DB_HOST=${DB_HOST}
 DB_USERNAME=${DB_USERNAME}

@@ -119,7 +119,7 @@ public class AuthorizationApiApplication {
     }
 
     @Bean
-    ApplicationRunner usersRunner(
+    ApplicationRunner usersInitializationRunner(
             PasswordEncoder passwordEncoder,
             AuthorizationApiProperties properties,
             UserDetailsManager userDetailsManager) {
@@ -137,22 +137,6 @@ public class AuthorizationApiApplication {
                 .filter(u -> !userDetailsManager.userExists(u.getUsername()))
                 .forEach(userDetailsManager::createUser);
     }
-/*
-    @Bean
-    InMemoryUserDetailsManager inMemoryUserDetailsManager(AuthorizationApiProperties properties) {
-        Assert.state(properties.users() != null && properties.users().length > 0, "you must specify some users!");
-        var users = Stream.of(properties.users())
-                .peek(e -> log.info("registered new user [" + e.username() + "] with password [" + e.password() + "] and roles[" +
-                                    Arrays.toString(e.roles()) + "]"))
-                .map(e -> User.withDefaultPasswordEncoder()
-                        .roles(e.roles())
-                        .username(e.username())
-                        .password(e.password())
-                        .build()
-                )
-                .toList();
-        return new InMemoryUserDetailsManager(users);
-    }*/
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -195,12 +179,7 @@ public class AuthorizationApiApplication {
             var jwk = new JWKSet(rsa);
             return new ImmutableJWKSet<>(jwk);
         }
-
-
     }
-
-
-    // clients
 
     @Bean
     RegisteredClientRepository registeredClientRepository(JdbcTemplate template) {
@@ -209,7 +188,7 @@ public class AuthorizationApiApplication {
 
     @Bean
     ApplicationRunner clientsRunner(RegisteredClientRepository repository,
-                                    @Value("${TWIS_REDIRECT_URI:http://127.0.0.1:8082/login/oauth2/code/spring}") String twisRedirectUri,
+                                    @Value("${TWIS_CLIENT_REDIRECT_URI:http://127.0.0.1:8082/login/oauth2/code/spring}") String twisRedirectUri,
                                     @Value("${TWIS_CLIENT_KEY_SECRET}") String twisClientSecret,
                                     @Value("${SOCIALHUB_JOSHLONG_CLIENT_KEY_SECRET}") String socialHubClientSecret) {
         return args -> {
@@ -217,7 +196,7 @@ public class AuthorizationApiApplication {
 
                     "socialhub-joshlong", RegisteredClient
                             .withId(UUID.randomUUID().toString())
-                            .clientSecret( (socialHubClientSecret))
+                            .clientSecret((socialHubClientSecret))
                             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                             .authorizationGrantTypes(grantTypes -> grantTypes.add(
                                     AuthorizationGrantType.CLIENT_CREDENTIALS))
@@ -228,7 +207,7 @@ public class AuthorizationApiApplication {
                             .clientSettings(ClientSettings.builder()
                                     .requireAuthorizationConsent(true)
                                     .build())
-                            .clientSecret( (twisClientSecret))
+                            .clientSecret((twisClientSecret))
                             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                             .authorizationGrantTypes(grantTypes -> grantTypes.addAll(Set.of(
                                     AuthorizationGrantType.CLIENT_CREDENTIALS,
