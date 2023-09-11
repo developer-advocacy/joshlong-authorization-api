@@ -115,22 +115,22 @@ public class AuthorizationApiApplication {
 
     @Bean
     ApplicationRunner usersRunner(
+            PasswordEncoder passwordEncoder ,
             AuthorizationApiProperties properties,
             UserDetailsManager userDetailsManager) {
-        return args -> {
-
-            Stream.of(properties.users())
-                    .peek(e -> log.info("registered new user [" + e.username() + "] with password [" + e.password() + "] and roles[" +
-                                        Arrays.toString(e.roles()) + "]"))
-                    .map(e -> User.withDefaultPasswordEncoder()
-                            .roles(e.roles())
-                            .username(e.username())
-                            .password(e.password())
-                            .build()
-                    )
-                    .filter(u -> !userDetailsManager.userExists(u.getUsername()))
-                    .forEach(userDetailsManager::createUser);
-        };
+        return args -> Stream.of(properties.users())
+                .peek(e -> log.info("registered new user [" + e.username() + "] with password [" + e.password() + "] and roles[" +
+                                    Arrays.toString(e.roles()) + "]"))
+                .map(e -> User
+                        .builder()
+                        .passwordEncoder(passwordEncoder::encode)
+                        .roles(e.roles())
+                        .username(e.username())
+                        .password(e.password())
+                        .build()
+                )
+                .filter(u -> !userDetailsManager.userExists(u.getUsername()))
+                .forEach(userDetailsManager::createUser);
     }
 /*
     @Bean
