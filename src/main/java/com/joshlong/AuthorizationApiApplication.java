@@ -38,6 +38,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -46,10 +47,7 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -178,8 +176,6 @@ public class AuthorizationApiApplication {
             @Value("${jwk.key.id:bootiful-jwk-id}") String id,
             @Value("${jwk.key.public}") String publicKeyBase64Encoded,
             @Value("${jwk.key.private}") String privateKeyBase64Encoded
-//            @Value("${jwt.key.private}") RSAPrivateKey privateKey,
-//            @Value("${jwt.key.public}") RSAPublicKey publicKey
     ) throws Exception {
 
         var decoder = Base64.getDecoder();
@@ -206,7 +202,6 @@ public class AuthorizationApiApplication {
 
     // clients
 
-/*
     @Bean
     RegisteredClientRepository registeredClientRepository(JdbcTemplate template) {
         return new JdbcRegisteredClientRepository(template);
@@ -214,32 +209,40 @@ public class AuthorizationApiApplication {
 
     @Bean
     ApplicationRunner clientsRunner(RegisteredClientRepository repository,
-                                    PasswordEncoder passwordEncoder ,
-                                    @Value("${TWIS_CLIENT_KEY_SECRET}") String twisClientSecret) {
+                                    @Value("${TWIS_REDIRECT_URI:http://127.0.0.1:8082/login/oauth2/code/spring}") String twisRedirectUri,
+                                    @Value("${TWIS_CLIENT_KEY_SECRET}") String twisClientSecret,
+                                    @Value("${SOCIALHUB_JOSHLONG_CLIENT_KEY_SECRET}") String socialHubClientSecret) {
         return args -> {
-            var clientId = "twis";
-            if (repository.findByClientId(clientId) == null) {
-                repository.save(
-                        RegisteredClient
-                                .withId(UUID.randomUUID().toString())
-                                .clientId(clientId)
+            var clients = Map.of(
 
-                                .clientSecret(passwordEncoder.encode(twisClientSecret) )
-                                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                                .authorizationGrantTypes(grantTypes -> grantTypes.addAll(Set.of(
-                                        AuthorizationGrantType.CLIENT_CREDENTIALS,
-                                        AuthorizationGrantType.AUTHORIZATION_CODE,
-                                        AuthorizationGrantType.REFRESH_TOKEN)))
-                                .redirectUri("http://127.0.0.1:8082/login/oauth2/code/spring")
-                                .scopes(scopes -> scopes.addAll(Set.of("user.read", "user.write", OidcScopes.OPENID)))
-                                .build()
-                );
-            }
+                    "socialhub-joshlong", RegisteredClient
+                            .withId(UUID.randomUUID().toString())
+                            .clientSecret( (socialHubClientSecret))
+                            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                            .authorizationGrantTypes(grantTypes -> grantTypes.add(
+                                    AuthorizationGrantType.CLIENT_CREDENTIALS))
+                            .scopes(scopes -> scopes.addAll(Set.of("user.read", "user.write", OidcScopes.OPENID)))
+                    ,
+                    "twis", RegisteredClient
+                            .withId(UUID.randomUUID().toString())
+                            .clientSettings(ClientSettings.builder()
+                                    .requireAuthorizationConsent(true)
+                                    .build())
+                            .clientSecret( (twisClientSecret))
+                            .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                            .authorizationGrantTypes(grantTypes -> grantTypes.addAll(Set.of(
+                                    AuthorizationGrantType.CLIENT_CREDENTIALS,
+                                    AuthorizationGrantType.AUTHORIZATION_CODE,
+                                    AuthorizationGrantType.REFRESH_TOKEN)))
+                            .redirectUri(twisRedirectUri)
+                            .scopes(scopes -> scopes.addAll(Set.of("user.read", "user.write", OidcScopes.OPENID)))
+            );
+            clients.forEach((clientId, rcb) -> {
+                if (repository.findByClientId(clientId) == null)
+                    repository.save(rcb.clientId(clientId).build());
+            });
         };
     }
-*/
-
-
 }
 
 
