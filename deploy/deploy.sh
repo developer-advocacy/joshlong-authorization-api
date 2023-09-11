@@ -35,3 +35,4 @@ kubectl delete secrets $SECRETS || echo "no secrets to delete."
 kubectl create secret generic $SECRETS --from-env-file $SECRETS_FN
 kubectl delete -f $ROOT_DIR/deploy/k8s/deployment.yaml || echo "couldn't delete the deployment as there was nothing deployed."
 kubectl apply -f $ROOT_DIR/deploy/k8s
+
