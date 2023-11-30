@@ -15,7 +15,7 @@ spec:
         app: joshlong-authorization-api
     spec:
       containers:
-        - image: gcr.io/pgtm-jlong/joshlong-authorization-api
+        - image: gcr.io/joshlong/joshlong-authorization-api
           imagePullPolicy: Always
           name: joshlong-authorization-api
 
